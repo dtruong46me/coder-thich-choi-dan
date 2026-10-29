@@ -130,7 +130,42 @@ export default function CommandBar({
   return (
     <>
       <div className="ct-cmd-scrim" onMouseDown={onClose} aria-hidden="true" />
+      {/* A floating popup near the top, like Neovim's noice cmdline: input first, completions drop below it. */}
       <div className="ct-cmd" role="dialog" aria-label="Command line">
+        <span className="ct-cmd-title" aria-hidden="true">
+          Cmdline
+        </span>
+        <div className="ct-cmd-line">
+          <span className="ct-cmd-colon" aria-hidden="true">
+            :
+          </span>
+          <label className="ct-sr" htmlFor={id}>
+            Command
+          </label>
+          <input
+            id={id}
+            ref={inputRef}
+            className="ct-cmd-input"
+            value={q}
+            spellCheck={false}
+            autoComplete="off"
+            autoCapitalize="off"
+            aria-controls={`${id}-list`}
+            placeholder={placeholder}
+            onChange={(e) => {
+              setQ(e.target.value)
+              setSel(0)
+              setErr('')
+              setHits(null)
+            }}
+            onKeyDown={onKey}
+          />
+        </div>
+        {err ? (
+          <div className="ct-cmd-err" role="alert">
+            {err}
+          </div>
+        ) : null}
         {hits && hits.length ? (
           <ul className="ct-cmd-list" role="listbox" id={`${id}-list`}>
             {hits.map((h, i) => (
@@ -173,38 +208,7 @@ export default function CommandBar({
             ))}
           </ul>
         ) : null}
-        {err ? (
-          <div className="ct-cmd-err" role="alert">
-            {err}
-          </div>
-        ) : null}
-        <div className="ct-cmd-line">
-          <span className="ct-cmd-colon" aria-hidden="true">
-            :
-          </span>
-          <label className="ct-sr" htmlFor={id}>
-            Command
-          </label>
-          <input
-            id={id}
-            ref={inputRef}
-            className="ct-cmd-input"
-            value={q}
-            spellCheck={false}
-            autoComplete="off"
-            autoCapitalize="off"
-            aria-controls={`${id}-list`}
-            placeholder={placeholder}
-            onChange={(e) => {
-              setQ(e.target.value)
-              setSel(0)
-              setErr('')
-              setHits(null)
-            }}
-            onKeyDown={onKey}
-          />
-          <span className="ct-cmd-hint">Enter to go · Tab to complete · Esc to close</span>
-        </div>
+        <div className="ct-cmd-hint">Enter to go · Tab to complete · Esc to close</div>
       </div>
     </>
   )

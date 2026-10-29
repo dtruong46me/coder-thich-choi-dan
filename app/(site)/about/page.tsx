@@ -15,7 +15,7 @@ export default async function AboutPage() {
   const settings = await getSettings()
   return (
     <>
-      <section className="wrap hero-grid" style={{ paddingBottom: 96 }}>
+      <section className="wrap hero-grid about-hero" style={{ paddingBottom: 96 }}>
         <div className="stack-16" style={{ gap: 22 }}>
           <h1 className="h1 in m0" style={{ fontSize: 'clamp(42px, 5.2vw, 68px)', lineHeight: 1.06 }}>
             Hi, I&apos;m Dinh Truong.

@@ -1,4 +1,4 @@
-import { Button, Logo } from '@/components/ds/primitives'
+import { Logo } from '@/components/ds/primitives'
 import { ThemeToggle } from '@/components/ds/ThemeToggle'
 import { OpenCommandButton } from './CommandLine'
 import { Suspense } from 'react'
@@ -15,9 +15,6 @@ export function SiteHeader() {
         <div className="site-header-tools">
           <OpenCommandButton />
           <ThemeToggle />
-          <Button size="sm" href="/#subscribe">
-            Subscribe
-          </Button>
         </div>
       </div>
     </header>

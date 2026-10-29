@@ -32,7 +32,7 @@ export const SITE_COMMANDS: Command[] = [
   { cmd: 'projects', aliases: ['p'], desc: 'Go to Projects', href: '/projects' },
   { cmd: 'about', aliases: ['a'], desc: 'Go to About', href: '/about' },
   { cmd: 'search', aliases: ['s'], desc: 'Search posts: :search fret' },
-  { cmd: 'subscribe', aliases: ['sub'], desc: 'Jump to the email form', href: '/#subscribe' },
+  { cmd: 'subscribe', aliases: ['sub'], desc: 'Jump to the email form in the footer', href: '#subscribe' },
   themeCommand,
   { cmd: 'admin', desc: 'Open the admin (owner only)', href: '/admin' },
 ]

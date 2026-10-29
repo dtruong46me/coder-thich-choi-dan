@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import { BlogBrowser } from '@/components/site/BlogBrowser'
-import { topicsFor } from '@/lib/collections'
 import { getCollections, getListing } from '@/lib/db/queries/public'
 
 export const metadata: Metadata = {
@@ -25,7 +24,7 @@ export default async function BlogsPage() {
           </p>
         </div>
       </section>
-      <BlogBrowser cards={cards} collections={collections} topics={topicsFor(collections)} />
+      <BlogBrowser cards={cards} collections={collections} />
     </>
   )
 }

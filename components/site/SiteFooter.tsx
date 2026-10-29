@@ -1,4 +1,5 @@
 import { IconButton, Logo } from '@/components/ds/primitives'
+import { SubscribeForm } from '@/components/ds/SubscribeForm'
 import { getSettings } from '@/lib/db/queries/public'
 import { SITE, socialsWith } from '@/lib/site'
 
@@ -11,11 +12,14 @@ export async function SiteFooter() {
           <Logo size="sm" href="/" />
           <span className="small muted">© 2026 {SITE.author}</span>
         </div>
-        <nav aria-label="Social" className="row-8">
-          {socialsWith(settings.socials).map((s) => (
-            <IconButton key={s.icon} icon={s.icon} label={s.label} href={s.href} />
-          ))}
-        </nav>
+        <div className="site-footer-end">
+          <nav aria-label="Social" className="row-8">
+            {socialsWith(settings.socials).map((s) => (
+              <IconButton key={s.icon} icon={s.icon} label={s.label} href={s.href} />
+            ))}
+          </nav>
+          <SubscribeForm id="subscribe" />
+        </div>
       </div>
     </footer>
   )

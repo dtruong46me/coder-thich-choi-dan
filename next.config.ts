@@ -6,7 +6,8 @@ const r2Host = process.env.R2_PUBLIC_HOST // e.g. media.coderthichchoidan.dev
 // They get a static policy here; /admin gets a nonce-based policy from proxy.ts.
 const publicCsp = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com",
+  // React needs eval() in development for its debugging features; never in production.
+  `script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com${process.env.NODE_ENV === 'development' ? " 'unsafe-eval'" : ''}`,
   "style-src 'self' 'unsafe-inline'",
   `img-src 'self' data: blob:${r2Host ? ` https://${r2Host}` : ''}`,
   "font-src 'self'",

@@ -1,5 +1,6 @@
 // Seeds collections, projects and sample posts from the design. Safe to run twice.
 // Run: npm run db:seed   (uses DATABASE_URL; needs the react-server condition for server-only modules)
+import './load-env'
 import { eq, sql } from 'drizzle-orm'
 import { markdownToDoc } from '../lib/content/markdown'
 import { renderDoc } from '../lib/content/render'

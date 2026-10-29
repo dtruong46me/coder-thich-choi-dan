@@ -3,13 +3,11 @@ import { PostCard } from '@/components/ds/cards'
 import { DotGlobe } from '@/components/ds/DotGlobe'
 import { Icon } from '@/components/ds/Icon'
 import { Button } from '@/components/ds/primitives'
-import { SubscribeBand } from '@/components/ds/SubscribeBand'
 import { Fretboard } from '@/components/site/Fretboard'
 import { HeroPlayer } from '@/components/site/HeroPlayer'
 import { collectionCounts, countLabel, isPrivateCollection } from '@/lib/collections'
 import { getCollections, getListing, getProjects, type OpenCard } from '@/lib/db/queries/public'
 import { formatDate } from '@/lib/format'
-import { TOPICS } from '@/lib/site'
 
 const STATUS_LABEL = { shipped: 'shipped', in_progress: 'in progress', archived: 'archived' } as const
 const KIND_LABEL: Record<string, string> = { web: 'Web', music: 'Music tool', cli: 'CLI', course: 'Coursework' }
@@ -163,16 +161,6 @@ export default async function HomePage() {
             </Link>
           ))}
         </div>
-      </section>
-
-      <section className="wrap reveal" style={{ paddingBottom: 88 }}>
-        <SubscribeBand
-          id="subscribe"
-          title="Get new posts by email"
-          description="One email when a public post goes live. Diary pages are never sent."
-          cta="Subscribe"
-          topics={[...TOPICS]}
-        />
       </section>
     </>
   )

@@ -24,7 +24,7 @@ npm run db:seed
 npm run dev
 ```
 
-Mở http://localhost:3000. Đăng nhập admin tại `/sign-in?next=/admin` bằng email trong `OWNER_EMAIL`: khi chưa có
+Postgres trong Docker chạy ở cổng 5433 (để không đụng Postgres khác đang chiếm 5432). Mở http://localhost:3000. Đăng nhập admin tại `/sign-in?next=/admin` bằng email trong `OWNER_EMAIL`: khi chưa có
 `RESEND_API_KEY`, mọi email (link đăng nhập, xác nhận đăng ký, email bài mới) được in ra log của `npm run dev`.
 Sau lần đăng nhập đầu, vào *Manage › Settings › Add a passkey* để lần sau đăng nhập bằng vân tay / Face ID.
 

@@ -1,4 +1,8 @@
+import { loadEnvConfig } from '@next/env'
 import { defineConfig } from 'drizzle-kit'
+
+// drizzle-kit does not read .env.local on its own.
+loadEnvConfig(process.cwd())
 
 export default defineConfig({
   dialect: 'postgresql',

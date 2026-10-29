@@ -8,7 +8,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 .ct-icon { flex: none; display: block; }
 .ct-btn:focus-visible, .ct-iconbtn:focus-visible, .ct-chip:focus-visible, .ct-seg-btn:focus-visible, .ct-input:focus-visible,
 .ct-postrow:focus-visible, .ct-postcard:focus-visible, .ct-colcard:focus-visible, .ct-code-copy:focus-visible, .ct-math-btn:focus-visible,
-.ct-sub-btn:focus-visible, .ct-sub-topic:focus-visible, .ct-player-play:focus-visible, .ct-term-chip:focus-visible, .ct-logo:focus-visible,
+.ct-sub-btn:focus-visible, .ct-player-play:focus-visible, .ct-logo:focus-visible,
 .ct-person-x:focus-visible, .ct-vis-opt:focus-within { outline: 2px solid transparent; box-shadow: var(--focus-ring); }
 .ct-search:focus-within { box-shadow: var(--focus-ring); }
 
@@ -65,6 +65,8 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 .ct-search { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 18px; border-radius: var(--radius-full); border: 1.5px solid var(--line-strong); background: var(--surface); color: var(--ink-muted); box-sizing: border-box; flex: 1 1 320px; min-width: 0; }
 .ct-search-input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: var(--ink); font: 400 15px/1 var(--font-sans); }
 .ct-search-input::placeholder { color: var(--ink-muted); }
+/* The whole pill shows the focus ring (:focus-within), so the input itself must not draw a second one. */
+.ct-search-input:focus-visible { box-shadow: none; }
 .ct-kbd { font: 500 11px/1 var(--font-mono); padding: 4px 6px; border-radius: var(--radius-sm); border: 1px solid var(--line-strong); color: var(--ink-muted); }
 
 /* VisibilityBadge */
@@ -161,37 +163,40 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 .ct-term-dot { width: 11px; height: 11px; border-radius: 50%; flex: none; }
 .ct-dot-close { background: var(--term-close); } .ct-dot-min { background: var(--term-min); } .ct-dot-max { background: var(--term-max); }
 .ct-term-title { margin-left: 8px; flex: 1; min-width: 0; font-size: 12px; color: var(--code-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.ct-term-body { flex: 1; padding: 16px 18px; overflow-y: auto; cursor: text; }
+.ct-term-body { flex: 1; padding: 18px 22px; overflow-y: auto; cursor: text; scrollbar-width: thin; scrollbar-color: var(--code-chrome) transparent; }
 .ct-term-line { white-space: pre-wrap; word-break: break-word; }
-.ct-term-user { color: var(--syn-string); }
-.ct-term-path { color: var(--syn-func); }
+.ct-term-user { color: var(--syn-string); font-weight: 500; }
+.ct-term-path { color: var(--syn-func); font-weight: 500; }
 .ct-term-dollar { color: var(--code-ink); }
 .ct-term-err { color: var(--syn-error); }
 .ct-term-ok { color: var(--syn-string); }
 .ct-term-accent { color: var(--syn-number); }
 .ct-term-muted { color: var(--code-muted); }
-.ct-term-input-row { display: flex; align-items: baseline; flex-wrap: nowrap; }
-.ct-term-input { flex: 1; min-width: 40px; border: 0; outline: none; background: transparent; color: var(--code-ink); font: inherit; caret-color: var(--syn-string); padding: 0; }
-.ct-term-sugg { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--code-chrome); }
-.ct-term-chip { min-height: 36px; padding: 0 12px; border-radius: var(--radius-full); border: 1px solid var(--code-chrome); background: transparent; color: var(--code-ink); font: 400 13px/1 var(--font-mono); cursor: pointer; }
-.ct-term-chip:hover { border-color: var(--syn-string); color: var(--syn-string); }
+.ct-term-info { color: var(--syn-func); }
+.ct-term-key { color: var(--syn-keyword); }
+.ct-term-dir { color: var(--syn-func); font-weight: 500; }
+/* The input sits invisibly on top of a mirror of its text; the mirror draws a block cursor like a real terminal. */
+/* Plain inline text, not flex, so copying a prompt line gives "user@host:~$ ls" on one line. */
+.ct-term-input-row { word-break: break-all; }
+.ct-term-field { position: relative; }
+.ct-term-mirror { color: var(--code-ink); }
+.ct-term-input { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; outline: none; background: transparent; color: transparent; caret-color: transparent; font: inherit; padding: 0; }
+.ct-term-input:focus-visible { box-shadow: none; }
+.ct-term-cursor { box-shadow: inset 0 0 0 1px var(--syn-string); }
+.ct-term-cursor.is-focused { box-shadow: none; background: var(--syn-string); color: var(--code-bg); }
+@media (prefers-reduced-motion: no-preference) { .ct-term-cursor.is-focused { animation: ct-term-blink 1.1s steps(1) .5s infinite; } }
+@keyframes ct-term-blink { 50% { background: transparent; color: var(--code-ink); } }
 
-/* SubscribeBand */
-.ct-sub { display: flex; flex-wrap: wrap; gap: var(--space-6); align-items: center; justify-content: space-between; padding: clamp(24px, 4vw, 48px); border-radius: var(--radius-xl); background: var(--accent); color: var(--on-accent); }
-.ct-sub-copy { flex: 1 1 340px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
-.ct-sub-title { margin: 0; font: 500 clamp(30px, 3.8vw, 46px)/1.05 var(--font-display); letter-spacing: -.02em; }
-.ct-sub-desc { margin: 0; font: 400 19px/1.5 var(--font-serif); }
-.ct-sub-form { flex: 1 1 400px; min-width: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-.ct-sub-topics { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.ct-sub-topic { min-height: 36px; padding: 0 14px; border-radius: var(--radius-full); border: 1.5px solid var(--on-accent); background: transparent; color: var(--on-accent); font: 500 13px/1 var(--font-sans); cursor: pointer; }
-.ct-sub-topic.is-on { background: var(--on-accent); color: var(--accent); }
-.ct-sub-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
-.ct-sub-btn { min-height: 48px; padding: 0 22px; border-radius: var(--radius-md); border: 0; background: var(--on-accent); color: var(--accent); font: 600 15px/1 var(--font-sans); cursor: pointer; }
-.ct-sub-done { font: 400 15px/1.7 var(--font-mono); padding: 18px; border-radius: var(--radius-md); border: 1.5px solid var(--on-accent); }
-.ct-sub-compact { flex-direction: column; align-items: stretch; padding: 20px; border-radius: var(--radius-lg); }
-.ct-sub-compact .ct-sub-title { font-size: 22px; }
-.ct-sub-compact .ct-sub-desc { font-size: 15px; }
-.ct-sub-compact .ct-sub-form, .ct-sub-compact .ct-sub-copy { flex: none; }
+/* SubscribeForm: tucked into the footer, deliberately small. */
+.ct-sub { position: relative; display: flex; flex-direction: column; gap: 6px; margin: 0; }
+.ct-sub-label { color: var(--ink-muted); font: 500 12px/1.4 var(--font-sans); }
+.ct-sub-row { display: flex; gap: 6px; }
+.ct-sub-input { width: 210px; min-width: 0; min-height: 36px; box-sizing: border-box; padding: 0 10px; border-radius: var(--radius-md); border: 1px solid var(--line); background: transparent; color: var(--ink); font: 400 13px/1 var(--font-sans); }
+.ct-sub-input::placeholder { color: var(--ink-muted); opacity: .8; }
+.ct-sub-btn { flex: none; min-height: 36px; padding: 0 12px; border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: transparent; color: var(--ink); font: 500 13px/1 var(--font-sans); cursor: pointer; }
+.ct-sub-btn:hover { border-color: var(--accent); color: var(--accent); }
+.ct-sub-err { margin: 0; color: var(--danger); font: 500 12px/1.4 var(--font-sans); }
+.ct-sub-done { margin: 0; color: var(--accent); font: 400 12px/1.5 var(--font-mono); }
 
 /* PlayerBar */
 .ct-player { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--radius-lg); background: var(--surface); box-sizing: border-box; width: 100%; max-width: 460px; }
@@ -217,23 +222,27 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f
 @media (prefers-reduced-motion: reduce) { .ct-globe, .ct-globe-scene.is-playing .ct-globe-pulse { animation: none; } }
 
 /* CommandBar (vim-style ":" command line) */
-.ct-cmd-scrim { position: fixed; inset: 0; z-index: 40; }
-.ct-cmd { position: fixed; left: 0; right: 0; bottom: 0; z-index: 41; background: var(--code-bg); color: var(--code-ink); font: 400 14px/1.6 var(--font-mono); border-top: 1px solid var(--code-chrome); box-shadow: var(--shadow-pop); }
-.ct-cmd-list { list-style: none; margin: 0; padding: 6px 0; max-height: min(50vh, 320px); overflow: auto; border-bottom: 1px solid var(--code-chrome); }
-.ct-cmd-item { display: flex; gap: 16px; align-items: baseline; padding: 7px 20px; cursor: pointer; }
+.ct-cmd-scrim { position: fixed; inset: 0; z-index: 40; background: rgb(0 0 0 / .25); }
+/* Floating popup about a third of the way down, centred, like LazyVim's cmdline. */
+.ct-cmd { position: fixed; top: 28vh; left: 0; right: 0; z-index: 41; width: min(640px, calc(100% - 32px)); margin: 0 auto; background: var(--code-bg); color: var(--code-ink); font: 400 14px/1.6 var(--font-mono); border: 1px solid var(--syn-func); border-radius: var(--radius-md); box-shadow: var(--shadow-pop); }
+.ct-cmd-title { position: absolute; top: 0; left: 14px; transform: translateY(-50%); padding: 0 6px; background: var(--code-bg); color: var(--syn-func); font-size: 12px; line-height: 1.6; }
+.ct-cmd-list { list-style: none; margin: 0; padding: 6px 0; max-height: min(40vh, 320px); overflow: auto; border-top: 1px solid var(--code-chrome); }
+.ct-cmd-item { display: flex; gap: 16px; align-items: baseline; padding: 7px 16px; cursor: pointer; }
 .ct-cmd-item.is-on { background: var(--code-chrome); }
 .ct-cmd-name { color: var(--syn-string); min-width: 120px; }
 .ct-cmd-alias { color: var(--code-muted); min-width: 64px; }
 .ct-cmd-desc { color: var(--code-ink); }
-.ct-cmd-err { padding: 6px 20px; color: var(--syn-error); }
-.ct-cmd-line { display: flex; align-items: center; gap: 2px; padding: 12px 20px; }
+.ct-cmd-err { padding: 6px 16px; color: var(--syn-error); border-top: 1px solid var(--code-chrome); }
+.ct-cmd-line { display: flex; align-items: center; gap: 2px; padding: 12px 16px; }
 .ct-cmd-colon { color: var(--syn-string); font-weight: 500; }
 .ct-cmd-input { flex: 1; min-width: 0; border: 0; outline: none; background: transparent; color: var(--code-ink); font: inherit; caret-color: var(--syn-string); padding: 0; }
 .ct-cmd-input::placeholder { color: var(--code-muted); }
-.ct-cmd-hint { color: var(--code-muted); font-size: 12px; white-space: nowrap; }
+/* The popup's border already shows where focus is. */
+.ct-cmd-input:focus-visible { box-shadow: none; }
+.ct-cmd-hint { padding: 6px 16px; border-top: 1px solid var(--code-chrome); color: var(--code-muted); font-size: 12px; white-space: nowrap; }
 @media (max-width: 640px) { .ct-cmd-hint, .ct-cmd-alias { display: none; } }
-@media (prefers-reduced-motion: no-preference) { .ct-cmd { animation: ct-cmd-in .18s cubic-bezier(.16,1,.3,1); } }
-@keyframes ct-cmd-in { from { transform: translateY(10px); opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) { .ct-cmd { animation: ct-cmd-in .16s cubic-bezier(.16,1,.3,1); } }
+@keyframes ct-cmd-in { from { transform: translateY(-6px) scale(.98); opacity: 0; } }
 .ct-cmdhint { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 12px 0 8px; border-radius: var(--radius-md); border: 1px solid var(--line-strong); background: transparent; color: var(--ink-muted); font: 500 14px/1 var(--font-sans); cursor: pointer; }
 .ct-cmdhint:hover { border-color: var(--accent); color: var(--ink); }
 .ct-cmdhint:focus-visible { outline: 2px solid transparent; box-shadow: var(--focus-ring); }
