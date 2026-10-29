@@ -1,0 +1,40 @@
+name: Restore drill
+
+# Once a month, restore the newest dump into a throwaway Postgres and check it.
+# A backup that has never been restored is not known to work.
+on:
+  schedule:
+    - cron: '41 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: drill
+          POSTGRES_PASSWORD: drill
+          POSTGRES_DB: drill
+        ports: ['5432:5432']
+        options: --health-cmd "pg_isready -U drill" --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.R2_BACKUP_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_BACKUP_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: auto
+      R2_ENDPOINT: https://${{ secrets.R2_ACCOUNT_ID }}.r2.cloudflarestorage.com
+      BUCKET: ${{ vars.R2_BACKUP_BUCKET || 'ctcd-backups' }}
+      PGPASSWORD: drill
+    steps:
+      - name: Fetch the newest dump
+        run: |
+          latest=$(aws s3 ls "s3://$BUCKET/db/" --endpoint-url "$R2_ENDPOINT" | sort | tail -1 | awk '{print $4}')
+          test -n "$latest"
+          aws s3 cp "s3://$BUCKET/db/$latest" latest.dump --endpoint-url "$R2_ENDPOINT"
+      - name: Restore
+        run: pg_restore --no-owner --no-privileges -h localhost -U drill -d drill latest.dump
+      - name: Sanity checks
+        run: |
+          psql -h localhost -U drill -d drill -v ON_ERROR_STOP=1 -c "select count(*) as posts from posts" -c "select count(*) as subscribers from subscribers" -c "select max(published_at) as newest from posts"

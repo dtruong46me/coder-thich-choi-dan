@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: ctcd
+          POSTGRES_PASSWORD: ctcd
+          POSTGRES_DB: ctcd
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U ctcd"
+          --health-interval 5s --health-timeout 3s --health-retries 10
+    env:
+      # The app connects as a role that does not own the tables, so Row-Level Security is exercised.
+      DATABASE_URL: postgres://ctcd_app:ctcd_app@localhost:5432/ctcd
+      MIGRATION_DATABASE_URL: postgres://ctcd:ctcd@localhost:5432/ctcd
+      TEST_DATABASE_URL: postgres://ctcd_app:ctcd_app@localhost:5432/ctcd
+      BETTER_AUTH_SECRET: ci-only-secret-ci-only-secret-000000
+      BETTER_AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
+      OWNER_EMAIL: owner@example.com
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+
+      - name: Create the app database role
+        run: psql postgres://ctcd:ctcd@localhost:5432/ctcd -v ON_ERROR_STOP=1 -f scripts/db/init-roles.sql
+      - name: Migrations apply to an empty database
+        run: npx drizzle-kit migrate
+      - name: Migrations match the schema
+        run: npx drizzle-kit check
+
+      - name: Unit and database tests (canRead, renderer, autosave conflict, RLS, search)
+        run: npm test
+
+      - name: Seed sample content
+        run: npm run db:seed
+      - name: Build
+        run: npm run build
+
+      - name: End-to-end tests
+        run: |
+          npx playwright install --with-deps chromium
+          npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Start the production server
+        run: |
+          npx next start -p 3000 &
+          for i in $(seq 1 60); do curl -sf http://localhost:3000/api/health && break; sleep 1; done
+      - name: Reader JS budget (70 KB gzip on top of the React/Next runtime)
+        run: npm run check:js
+      - name: Lighthouse CI (Home and a sample post)
+        run: npx --yes @lhci/cli@0.15.1 autorun
