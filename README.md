@@ -124,9 +124,13 @@ Vitest (kèm test DB), build, Playwright, ngân sách JS và Lighthouse CI.
 - Danh sách bài (Home, Blogs) luôn là bản dành cho khách để giữ được cache CDN; người được chia sẻ bấm thẻ khóa
   sẽ được kiểm tra quyền và chuyển tới bài.
 
+## Quyết định đã chốt
+
+- **Bình luận**: chưa làm. Khi cần thì chỉ cho thành viên đã đăng nhập, mặc định chờ duyệt.
+- **Ngôn ngữ**: không cần cột `lang`. Nhật ký và blog viết tiếng Việt, tiếng Anh hay trộn cả hai đều được: tìm kiếm
+  dùng cấu hình `simple` + bỏ dấu nên không phụ thuộc ngôn ngữ (gõ "dan" ra "đàn", "bach khoa" ra "Bách Khoa").
+- **Thông tin cá nhân**: các giá trị trong ngoặc vuông ở `content/about.ts` và `content/now.ts` sẽ điền sau.
+
 ## Việc còn chờ quyết định
 
-Theo mục "Việc cần bạn quyết trước khi code" trong tài liệu: host (đang cấu hình sẵn cho Vercel), tên miền và miền
-gửi email, Resend hay SES, analytics, bình luận (chưa làm), và ngôn ngữ của nhật ký/blog (tìm kiếm đang dùng cấu
-hình `simple` + bỏ dấu, chưa có cột `lang`). Các giá trị trong ngoặc vuông ở `content/about.ts` và `content/now.ts`
-là chỗ để điền thông tin thật.
+Host (đang cấu hình sẵn cho Vercel), tên miền và miền gửi email, Resend hay SES, analytics.
